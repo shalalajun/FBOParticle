@@ -9,7 +9,7 @@ export default class Environment
         this.scene = this.project.scene;
         this.resources = this.project.resources;
         this.setSunLight();
-        this. setEnvironmentMap();
+        this.setEnvironmentMap();
     }
 
     setSunLight()
