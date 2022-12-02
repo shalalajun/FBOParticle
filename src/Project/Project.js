@@ -10,6 +10,7 @@ import FBO from './World/FBO.js';
 
 
 
+
 let instance = null;
 
 export default class Project
@@ -31,13 +32,21 @@ export default class Project
         this.sizes = new Sizes();
         this.time = new Time();
         this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x888888);
         this.resources = new Resources(sources);
         this.camera = new Camera();
         this.renderer = new Renderer();
         this.world = new World();
         this.fbo = new FBO();
-      
+
+        //GPGPU
+        this.dtPosition;
+        this.gpuCompute;
+        this.positionVariable;
         
+       
+      
+      
         this.sizes.on('resize',()=>
         {
             this.resize();
@@ -48,6 +57,8 @@ export default class Project
            this.update();
         })
     }
+
+   
 
     resize()
     {
