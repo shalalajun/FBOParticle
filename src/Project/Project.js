@@ -38,11 +38,10 @@ export default class Project
         this.renderer = new Renderer();
         this.world = new World();
         this.fbo = new FBO();
+        //this.fbo.initGPGPU(this.renderer);
 
         //GPGPU
-        this.dtPosition;
-        this.gpuCompute;
-        this.positionVariable;
+       
         
        
       
@@ -71,6 +70,7 @@ export default class Project
     {
         this.camera.update();
         this.renderer.update();
+        // this.fbo.initGPGPU();
         //this.fbo.update();
     }
 }

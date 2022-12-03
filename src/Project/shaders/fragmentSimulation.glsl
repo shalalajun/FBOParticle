@@ -1,5 +1,6 @@
 uniform float time;
-//uniform float delta;
+//uniform sampler2D texturePosition;
+uniform float delta;
 
 void main()	{
 

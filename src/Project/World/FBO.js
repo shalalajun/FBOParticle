@@ -4,18 +4,21 @@ import fragmentSimulation from '../shaders/fragmentSimulation.glsl';
 import vertex from '../shaders/vertexParticle.glsl';
 import fragment from '../shaders/fragment.glsl';
 import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer.js';
+import EventEmitter from '../Utils/EventEmitter';
+import  Renderer  from '../Renderer.js';
 
-const WIDTH = 32;
+let WIDTH = 32;
 
 export default class FBO
 {
     constructor()
     {
       
+        
         this.project = new Project();
         this.scene = this.project.scene;
-        this.renderer = this.project.renderer;
-        //console.log(this.renderer);
+        this.renderer = this.project.renderer
+        console.log(this.renderer);
         this.position = new THREE.Vector3();
         this.plane;
         this.initMesh();
@@ -25,11 +28,11 @@ export default class FBO
 
     initMesh()
     {
-        this.planGeometry = new THREE.PlaneGeometry(1,1,10,10);
+       
         this.planMaterial = new THREE.ShaderMaterial(
             {
-                extensions: {
-                    derivatives: "#extension GL_OES_standard_derivatives: enable"
+                extensions:{
+                    derivatives: "#extension GL_OES_standard_derivatives : enable"
                 },
                 side: THREE.DoubleSide,
                 uniforms : {
@@ -55,9 +58,12 @@ export default class FBO
             positions.set([x,y,z], i*3);
             reference.set([xx,yy], i*2);
         }
+
+        this.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        this.geometry.setAttribute('reference', new THREE.BufferAttribute(reference, 2));
             
-        this.plane = new THREE.Points(this.planGeometry, this.planMaterial);
-        this.plane.position.copy(this.position);
+        this.plane = new THREE.Points(this.geometry, this.planMaterial);
+        //this.plane.position.copy(this.position);
         this.scene.add(this.plane);
     }
 
@@ -69,6 +75,18 @@ export default class FBO
     initGPGPU()
     {
         this.gpuCompute = new GPUComputationRenderer(WIDTH, WIDTH, this.renderer);
+        // if ( this.renderer.capabilities.isWebGL2 === false && renderer.extensions.has( 'OES_texture_float' ) === false ) {
+
+        //     return 'No OES_texture_float support for float textures.';
+    
+        //   }
+    
+        //   if ( this.renderer.capabilities.maxVertexTextures === 0 ) {
+    
+        //     return 'No support for vertex shader textures.';
+    
+        //   }
+       // console.log(this.renderer.capabilities.isWebGL2);
         this.dtPosition = this.gpuCompute.createTexture();
         this.fillPositions(this.dtPosition);
         this.positionVariable = this.gpuCompute.addVariable('texturePosition', fragmentSimulation, this.dtPosition); 
@@ -77,9 +95,7 @@ export default class FBO
 
         this.positionVariable.wrapS = THREE.RepeatWrapping;
         this.positionVariable.wrapT = THREE.RepeatWrapping;
-
-        //this.gpuCompute.init();
-        
+        this.gpuCompute.init();
     }
 
     fillPositions(texture)
@@ -97,6 +113,6 @@ export default class FBO
             arr[i+2] = z;
             arr[i+3] = 1;
         }
-        console.log(arr);
+       // console.log(arr);
     }
 }
